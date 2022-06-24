@@ -1,18 +1,21 @@
 const express = require("express");
+const path = require("path");
 const app = express();
 const url = require("url");
 const morgan = require("morgan");
 
 app.use(morgan(`[:date[clf] "UserAgent=:user-agent" ":method :url" Status=:status TempsResponse= :response-time ms`))
 
+app.use(express.static(path.join(__dirname,"public")));
+
 const whiteList = ["contact","about"];
 
 app.get("/",(req,ans)=>{
-    ans.render(`html.ejs`,{title:"Accueil"});
+    ans.render(`html.ejs`,{title:"Accueil",home:true});
 }).get("/page=:page",(req,ans)=>{
     const param = req.params.page;
     if(whiteList.includes(param)){
-        ans.render(`html.ejs`,{title:param});
+        ans.render(`html.ejs`,{title:param,home:false});
     }else{
         ans.redirect(url.format({
             pathname:"/",
